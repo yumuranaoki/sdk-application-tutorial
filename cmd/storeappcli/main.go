@@ -13,17 +13,17 @@ import (
 	authcmd "github.com/cosmos/cosmos-sdk/x/auth/client/cli"
 	bankcmd "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
 	app "github.com/cosmos/sdk-application-tutorial"
-	nameservicecmd "github.com/cosmos/sdk-application-tutorial/x/nameservice/client/cli"
+	storeappcmd "github.com/yumuranaoki/sdk-application-tutorial/x/storeapp/client/cli"
 )
 
 const storeAcc = "acc"
 
 var (
 	rootCmd = &cobra.Command{
-		Use:   "nameservicecli",
-		Short: "nameservice Client",
+		Use:   "storeappcli",
+		Short: "storeapp Client",
 	}
-	defaultCLIHome = os.ExpandEnv("$HOME/.nameservicecli")
+	defaultCLIHome = os.ExpandEnv("$HOME/.storeappcli")
 )
 
 func main() {
@@ -47,8 +47,7 @@ func main() {
 	queryCmd.AddCommand(client.LineBreak)
 	queryCmd.AddCommand(client.GetCommands(
 		authcmd.GetAccountCmd(storeAcc, cdc, authcmd.GetAccountDecoder(cdc)),
-		nameservicecmd.GetCmdResolveName("nameservice", cdc),
-		nameservicecmd.GetCmdWhois("nameservice", cdc),
+		storeappcmd.GetCmdGetValue("storeapp", cdc),
 	)...)
 
 	txCmd := &cobra.Command{
@@ -58,8 +57,7 @@ func main() {
 
 	txCmd.AddCommand(client.PostCommands(
 		bankcmd.SendTxCmd(cdc),
-		nameservicecmd.GetCmdBuyName(cdc),
-		nameservicecmd.GetCmdSetName(cdc),
+		storeappcmd.GetCmdSetValue(cdc),
 	)...)
 
 	rootCmd.AddCommand(

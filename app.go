@@ -6,7 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/bank"
-	"github.com/cosmos/sdk-application-tutorial/x/nameservice"
+	"github.com/yumuranaoki/sdk-application-tutorial/x/storeapp"
 
 	bam "github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -16,28 +16,26 @@ import (
 )
 
 const (
-	appName = "nameservice"
+	appName = "storeapp"
 )
 
-type nameserviceApp struct {
+type storeApp struct {
 	*bam.BaseApp
 	cdc *codec.Codec
 
 	keyMain          *sdk.KVStoreKey
 	keyAccount       *sdk.KVStoreKey
-	keyNSnames       *sdk.KVStoreKey
-	keyNSowners      *sdk.KVStoreKey
-	keyNSprices      *sdk.KVStoreKey
+	keyStoreValue    *sdk.KVStoreKey
 	keyFeeCollection *sdk.KVStoreKey
 
 	accountKeeper       auth.AccountKeeper
 	bankKeeper          bank.Keeper
 	feeCollectionKeeper auth.FeeCollectionKeeper
-	nsKeeper            nameservice.Keeper
+	storeappKeeper      storeapp.Keeper
 }
 
-// NewnameserviceApp is a constructor function for nameserviceApp
-func NewnameserviceApp(logger log.Logger, db dbm.DB) *nameserviceApp {
+// NewStoreApp is a constructor function for nameserviceApp
+func NewStoreApp(logger log.Logger, db dbm.DB) *storeApp {
 
 	// First define the top level codec that will be shared by the different modules
 	cdc := MakeCodec()
@@ -46,15 +44,13 @@ func NewnameserviceApp(logger log.Logger, db dbm.DB) *nameserviceApp {
 	bApp := bam.NewBaseApp(appName, logger, db, auth.DefaultTxDecoder(cdc))
 
 	// Here you initialize your application with the store keys it requires
-	var app = &nameserviceApp{
+	var app = &storeApp{
 		BaseApp: bApp,
 		cdc:     cdc,
 
 		keyMain:          sdk.NewKVStoreKey("main"),
 		keyAccount:       sdk.NewKVStoreKey("acc"),
-		keyNSnames:       sdk.NewKVStoreKey("ns_names"),
-		keyNSowners:      sdk.NewKVStoreKey("ns_owners"),
-		keyNSprices:      sdk.NewKVStoreKey("ns_prices"),
+		keyStoreValue:    sdk.NewKVStoreKey("store_value"),
 		keyFeeCollection: sdk.NewKVStoreKey("fee_collection"),
 	}
 
@@ -73,11 +69,8 @@ func NewnameserviceApp(logger log.Logger, db dbm.DB) *nameserviceApp {
 
 	// The NameserviceKeeper is the Keeper from the module for this tutorial
 	// It handles interactions with the namestore
-	app.nsKeeper = nameservice.NewKeeper(
-		app.bankKeeper,
-		app.keyNSnames,
-		app.keyNSowners,
-		app.keyNSprices,
+	app.storeappKeeper = storeapp.NewKeeper(
+		app.keyStoreValue,
 		app.cdc,
 	)
 
@@ -88,11 +81,11 @@ func NewnameserviceApp(logger log.Logger, db dbm.DB) *nameserviceApp {
 	// Register the bank and nameservice routes here
 	app.Router().
 		AddRoute("bank", bank.NewHandler(app.bankKeeper)).
-		AddRoute("nameservice", nameservice.NewHandler(app.nsKeeper))
+		AddRoute("storeapp", storeapp.NewHandler(app.storeappKeeper))
 
 	// The app.QueryRouter is the main query router where each module registers its routes
 	app.QueryRouter().
-		AddRoute("nameservice", nameservice.NewQuerier(app.nsKeeper))
+		AddRoute("storeapp", storeapp.NewQuerier(app.storeappKeeper))
 
 	// The initChainer handles translating the genesis.json file into initial state for the network
 	app.SetInitChainer(app.initChainer)
@@ -100,9 +93,7 @@ func NewnameserviceApp(logger log.Logger, db dbm.DB) *nameserviceApp {
 	app.MountStoresIAVL(
 		app.keyMain,
 		app.keyAccount,
-		app.keyNSnames,
-		app.keyNSowners,
-		app.keyNSprices,
+		app.keyStoreValue,
 	)
 
 	err := app.LoadLatestVersion(app.keyMain)
@@ -118,7 +109,7 @@ type GenesisState struct {
 	Accounts []auth.BaseAccount `json:"accounts"`
 }
 
-func (app *nameserviceApp) initChainer(ctx sdk.Context, req abci.RequestInitChain) abci.ResponseInitChain {
+func (app *storeApp) initChainer(ctx sdk.Context, req abci.RequestInitChain) abci.ResponseInitChain {
 	stateJSON := req.AppStateBytes
 
 	genesisState := new(GenesisState)
@@ -140,7 +131,7 @@ func MakeCodec() *codec.Codec {
 	var cdc = codec.New()
 	auth.RegisterCodec(cdc)
 	bank.RegisterCodec(cdc)
-	nameservice.RegisterCodec(cdc)
+	storeapp.RegisterCodec(cdc)
 	sdk.RegisterCodec(cdc)
 	codec.RegisterCrypto(cdc)
 	return cdc

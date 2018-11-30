@@ -19,5 +19,5 @@ update_vendor_deps:
 	@dep ensure -v -update
 
 install:
-	go install ./cmd/nameserviced
-	go install ./cmd/nameservicecli
+	go install ./cmd/storeappd
+	go install ./cmd/storeappcli

@@ -17,14 +17,14 @@ import (
 	"github.com/tendermint/tendermint/p2p"
 
 	gaiaInit "github.com/cosmos/cosmos-sdk/cmd/gaia/init"
-	app "github.com/cosmos/sdk-application-tutorial"
 	abci "github.com/tendermint/tendermint/abci/types"
 	dbm "github.com/tendermint/tendermint/libs/db"
 	tmtypes "github.com/tendermint/tendermint/types"
+	app "github.com/yumuranaoki/sdk-application-tutorial"
 )
 
 // DefaultNodeHome sets the folder where the applcation data and configuration will be stored
-var DefaultNodeHome = os.ExpandEnv("$HOME/.nameserviced")
+var DefaultNodeHome = os.ExpandEnv("$HOME/.storeappd")
 
 func main() {
 	cobra.EnableCommandSorting = false
@@ -37,8 +37,8 @@ func main() {
 	}
 
 	rootCmd := &cobra.Command{
-		Use:               "nameserviced",
-		Short:             "nameservice App Daemon (server)",
+		Use:               "storeappd",
+		Short:             "storeapp App Daemon (server)",
 		PersistentPreRunE: server.PersistentPreRunEFn(ctx),
 	}
 
@@ -56,7 +56,7 @@ func main() {
 }
 
 func newApp(logger log.Logger, db dbm.DB, traceStore io.Writer) abci.Application {
-	return app.NewnameserviceApp(logger, db)
+	return app.NewStoreApp(logger, db)
 }
 
 func exportAppStateAndTMValidators(logger log.Logger, db dbm.DB, traceStore io.Writer) (json.RawMessage, []tmtypes.GenesisValidator, error) {

@@ -108,6 +108,17 @@
   revision = "52158e4697b87de16ed390e1bdaf813e581008fa"
 
 [[projects]]
+  branch = "master"
+  digest = "1:8aa12da1c7ee1597d5743a0c5c82b86c5402b1aef8fe040d2389d9fd8a51c61e"
+  name = "github.com/cosmos/sdk-application-tutorial"
+  packages = [
+    ".",
+    "x/nameservice",
+  ]
+  pruneopts = "UT"
+  revision = "180931d4ba7fdacc5e333fa8a27837ca127a6ef3"
+
+[[projects]]
   digest = "1:ffe9824d294da03b391f44e1ae8281281b4afc1bdaa9588c9097785e3af10cec"
   name = "github.com/davecgh/go-spew"
   packages = ["spew"]
@@ -224,13 +235,12 @@
   version = "v1.2.0"
 
 [[projects]]
-  digest = "1:c0d19ab64b32ce9fe5cf4ddceba78d5bc9807f0016db6b1183599da3dcc24d10"
+  digest = "1:ea40c24cdbacd054a6ae9de03e62c5f252479b96c716375aace5c120d68647c8"
   name = "github.com/hashicorp/hcl"
   packages = [
     ".",
     "hcl/ast",
     "hcl/parser",
-    "hcl/printer",
     "hcl/scanner",
     "hcl/strconv",
     "hcl/token",
@@ -720,6 +730,7 @@
     "github.com/cosmos/cosmos-sdk/x/auth/client/txbuilder",
     "github.com/cosmos/cosmos-sdk/x/bank",
     "github.com/cosmos/cosmos-sdk/x/bank/client/cli",
+    "github.com/cosmos/sdk-application-tutorial",
     "github.com/spf13/cobra",
     "github.com/spf13/viper",
     "github.com/tendermint/tendermint/abci/types",
